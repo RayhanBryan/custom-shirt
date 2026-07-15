@@ -437,396 +437,52 @@ onMounted(() => {
     ></div>
 
     <!-- Header -->
-    <header class="glass-panel h-[70px] flex items-center justify-between px-8 my-4 mx-5 z-10">
+    <header class="glass-panel h-[60px] md:h-[70px] flex items-center justify-between px-4 md:px-8 my-2 md:my-4 mx-3 md:mx-5 z-10">
       <div class="flex items-center gap-3">
         <span
-          class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse"
+          class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse"
         ></span>
-        <h1 class="text-xl font-black tracking-widest text-white">
+        <h1 class="text-lg md:text-xl font-black tracking-widest text-white">
           STUDIO <span class="text-accent-indigo">3D</span>
         </h1>
       </div>
-      <p class="hidden sm:block text-xs text-text-muted tracking-[1.5px] uppercase">
+      <p class="hidden md:block text-xs text-text-muted tracking-[1.5px] uppercase">
         Interactive T-Shirt Configurator
       </p>
 
       <div>
         <button
-          class="flex items-center gap-2 bg-white/6 hover:bg-white/10 border border-border-subtle hover:border-white/20 text-white font-semibold py-2.5 px-4 rounded-lg text-sm cursor-pointer transition-all duration-300"
+          class="flex items-center gap-2 bg-white/6 hover:bg-white/10 border border-border-subtle hover:border-white/20 text-white font-semibold py-1.5 md:py-2.5 px-3 md:px-4 rounded-lg text-xs md:text-sm cursor-pointer transition-all duration-300"
           @click="resetView"
           title="Reset View"
         >
-          <RotateCcw :size="16" />
-          Reset Camera
+          <RotateCcw :size="14" class="md:hidden" />
+          <RotateCcw :size="16" class="hidden md:inline" />
+          <span class="hidden sm:inline">Reset Camera</span>
         </button>
       </div>
     </header>
 
-    <div class="flex flex-1 p-4 pb-5 px-5 gap-5 overflow-hidden z-5">
-      <!-- Sidebar Controls (Left) -->
-      <aside class="glass-panel w-[420px] flex flex-col overflow-hidden h-full">
-        <!-- Navigation Tabs -->
-        <nav class="flex border-b border-border-subtle bg-white/[0.01]">
-          <button
-            :class="[
-              'flex-1 flex flex-col items-center gap-1.5 bg-none border-b-2 border-transparent text-text-muted py-3.5 px-2 text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
-              {
-                'text-accent-indigo border-accent-indigo bg-accent-indigo/4': activeTab === 'color',
-              },
-            ]"
-            @click="activeTab = 'color'"
-          >
-            <Paintbrush :size="18" />
-            Base Color
-          </button>
-          <button
-            :class="[
-              'flex-1 flex flex-col items-center gap-1.5 bg-none border-b-2 border-transparent text-text-muted py-3.5 px-2 text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
-              {
-                'text-accent-indigo border-accent-indigo bg-accent-indigo/4':
-                  activeTab === 'design',
-              },
-            ]"
-            @click="activeTab = 'design'"
-          >
-            <ImageIcon :size="18" />
-            Decal Design
-          </button>
-          <button
-            :class="[
-              'flex-1 flex flex-col items-center gap-1.5 bg-none border-b-2 border-transparent text-text-muted py-3.5 px-2 text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
-              {
-                'text-accent-indigo border-accent-indigo bg-accent-indigo/4': activeTab === 'text',
-              },
-            ]"
-            @click="activeTab = 'text'"
-          >
-            <Type :size="18" />
-            Custom Text
-          </button>
-        </nav>
-
-        <!-- Tab Content -->
-        <div class="flex-1 overflow-y-auto p-6">
-          <!-- T-Shirt Color Tab -->
-          <div v-if="activeTab === 'color'" class="animate-fade-in">
-            <h2 class="text-lg font-bold mb-1.5">Shirt Base Color</h2>
-            <p class="text-xs text-text-muted mb-6 leading-relaxed">
-              Select a preset canvas tone or choose a custom aesthetic hue.
-            </p>
-
-            <div class="grid grid-cols-4 gap-3 mb-7">
-              <button
-                v-for="color in presetColors"
-                :key="color.hex"
-                class="h-13 rounded-xl border border-border-subtle cursor-pointer relative transition-all duration-300 hover:scale-[1.06] hover:shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
-                :style="{ backgroundColor: color.hex }"
-                :title="color.name"
-                @click="shirtColor = color.hex"
-              >
-                <span
-                  class="absolute inset-0 flex items-center justify-center"
-                  v-if="shirtColor.toLowerCase() === color.hex.toLowerCase()"
-                >
-                  <Check
-                    :size="14"
-                    :stroke-width="3"
-                    :class="color.hex === '#f3f4f6' ? 'text-[#121214]' : 'text-white'"
-                  />
-                </span>
-              </button>
-            </div>
-
-            <div class="pt-4 border-t border-border-subtle">
-              <label
-                class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2.5 block"
-                >Custom Hue</label
-              >
-              <div class="flex gap-3 items-center">
-                <div
-                  class="w-11 h-11 rounded-lg border border-border-subtle relative overflow-hidden cursor-pointer"
-                  :style="{ backgroundColor: shirtColor }"
-                >
-                  <input
-                    type="color"
-                    v-model="shirtColor"
-                    class="absolute -top-1 -left-1 w-15 h-15 border-0 p-0 cursor-pointer opacity-0"
-                  />
-                </div>
-                <input
-                  type="text"
-                  v-model="shirtColor"
-                  class="flex-1 p-2.5 px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
-                />
-              </div>
-            </div>
-          </div>
-
-          <!-- Graphic Decal Tab -->
-          <div v-if="activeTab === 'design'" class="animate-fade-in">
-            <h2 class="text-lg font-bold mb-1.5">Select Graphic Decal</h2>
-            <p class="text-xs text-text-muted mb-6 leading-relaxed">
-              Choose from high-fidelity vector decals or upload your own transparent graphic.
-            </p>
-
-            <div class="grid grid-cols-2 gap-3 mb-5">
-              <button
-                v-for="design in presetDesigns"
-                :key="design.url"
-                :class="[
-                  'bg-white/[0.02] border border-border-subtle rounded-xl p-2.5 cursor-pointer transition-all duration-300 flex flex-col items-center gap-2 hover:bg-white/[0.04] hover:border-white/15 hover:-translate-y-0.5',
-                  { 'border-accent-indigo bg-accent-indigo/5': currentDesign === design.url },
-                ]"
-                @click="currentDesign = design.url"
-              >
-                <div
-                  class="w-full h-20 flex items-center justify-center bg-black/20 rounded-lg p-2"
-                >
-                  <img
-                    :src="design.url"
-                    :alt="design.name"
-                    class="max-w-full max-h-full object-contain"
-                  />
-                </div>
-                <span
-                  :class="[
-                    'text-[11px] font-semibold text-text-muted',
-                    { 'text-white': currentDesign === design.url },
-                  ]"
-                  >{{ design.name }}</span
-                >
-              </button>
-            </div>
-
-            <!-- Custom File Upload -->
-            <div class="mb-6">
-              <label
-                class="group block border-2 border-dashed border-border-subtle rounded-xl p-5 text-center cursor-pointer transition-all duration-300 hover:border-accent-indigo hover:bg-accent-indigo/2"
-              >
-                <input
-                  type="file"
-                  @change="handleImageUpload"
-                  accept="image/png, image/jpeg, image/svg+xml"
-                  class="hidden"
-                />
-                <div class="flex flex-col items-center gap-2">
-                  <Upload
-                    :size="24"
-                    class="text-text-muted group-hover:text-accent-indigo group-hover:-translate-y-0.5 transition-all duration-300"
-                  />
-                  <span class="text-xs font-semibold">Upload Custom PNG/SVG</span>
-                  <span class="text-[11px] text-text-muted"
-                    >Transparent background recommended</span
-                  >
-                </div>
-              </label>
-            </div>
-
-            <!-- Position Controls -->
-            <div class="pt-5 border-t border-border-subtle" v-if="currentDesign">
-              <h3 class="text-sm font-bold mb-4 flex items-center gap-1.5">
-                <Move :size="14" /> Position & Scale
-              </h3>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Scale</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold"
-                    >{{ Math.round(designScale * 100) }}%</span
-                  >
-                </div>
-                <input type="range" min="0.1" max="0.8" step="0.01" v-model.number="designScale" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Vertical Shift</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold">{{
-                    Math.round((designY - 0.4) * -100)
-                  }}</span>
-                </div>
-                <input type="range" min="0.0" max="1.0" step="0.01" v-model.number="designY" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Horizontal Shift</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold">{{
-                    Math.round((designX - 0.5) * 100)
-                  }}</span>
-                </div>
-                <input type="range" min="0.1" max="0.9" step="0.01" v-model.number="designX" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Rotation</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold"
-                    >{{ designRotation }}°</span
-                  >
-                </div>
-                <input type="range" min="-180" max="180" step="1" v-model.number="designRotation" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Custom Text Tab -->
-          <div v-if="activeTab === 'text'" class="animate-fade-in">
-            <h2 class="text-lg font-bold mb-1.5">Add Text Overlay</h2>
-            <p class="text-xs text-text-muted mb-6 leading-relaxed">
-              Type your custom slogan and refine typography parameters.
-            </p>
-
-            <div class="mb-5">
-              <label
-                class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2.5 block"
-                >Slogan / Custom Text</label
-              >
-              <input
-                type="text"
-                v-model="customText"
-                placeholder="TYPE YOUR TEXT HERE"
-                maxlength="32"
-                class="w-full p-2.5 px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-base font-semibold outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
-              />
-            </div>
-
-            <div class="pt-5 border-t border-border-subtle" v-if="customText">
-              <div class="mb-4">
-                <label
-                  class="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 block"
-                  >Font Family</label
-                >
-                <select
-                  v-model="textFont"
-                  class="w-full p-2.5 px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
-                >
-                  <option v-for="font in textFonts" :key="font" :value="font" class="bg-[#121218]">
-                    {{ font }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Text Color</span
-                  >
-                </div>
-                <div class="flex gap-3 items-center">
-                  <div
-                    class="w-11 h-11 rounded-lg border border-border-subtle relative overflow-hidden cursor-pointer"
-                    :style="{ backgroundColor: textColor }"
-                  >
-                    <input
-                      type="color"
-                      v-model="textColor"
-                      class="absolute -top-1 -left-1 w-15 h-15 border-0 p-0 cursor-pointer opacity-0"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    v-model="textColor"
-                    class="flex-1 p-2.5 px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
-                  />
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Text Size</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold">{{ textSize }}px</span>
-                </div>
-                <input type="range" min="12" max="100" step="1" v-model.number="textSize" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Letter Spacing</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold"
-                    >{{ textLetterSpacing }}px</span
-                  >
-                </div>
-                <input type="range" min="0" max="25" step="1" v-model.number="textLetterSpacing" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Vertical Position</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold">{{
-                    Math.round((textY - 0.68) * 100)
-                  }}</span>
-                </div>
-                <input type="range" min="0.0" max="1.0" step="0.01" v-model.number="textY" />
-              </div>
-
-              <div class="mb-4">
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="text-xs font-semibold text-text-muted uppercase tracking-wider"
-                    >Horizontal Position</span
-                  >
-                  <span class="text-xs text-accent-indigo font-semibold">{{
-                    Math.round((textX - 0.5) * 100)
-                  }}</span>
-                </div>
-                <input type="range" min="0.1" max="0.9" step="0.01" v-model.number="textX" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Export Actions Panel -->
-        <div class="p-5 px-6 border-t border-border-subtle grid grid-cols-2 gap-3 bg-white/[0.01]">
-          <button
-            class="flex items-center justify-center gap-2 bg-accent-indigo hover:bg-indigo-600 text-white font-semibold py-3 px-5 rounded-lg cursor-pointer transition-all duration-300 shadow-[0_4px_14px_rgba(99,102,241,0.2)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5"
-            @click="exportMockup"
-          >
-            <Download :size="16" />
-            Export 3D
-          </button>
-          <button
-            class="flex items-center justify-center gap-2 bg-white/6 hover:bg-white/10 border border-border-subtle hover:border-white/20 text-white font-semibold py-3 px-5 rounded-lg cursor-pointer transition-all duration-300"
-            @click="exportPrintDesign"
-          >
-            <Maximize2 :size="16" />
-            Print Template
-          </button>
-        </div>
-      </aside>
-
-      <!-- 3D Viewport (Right/Center) -->
+    <div class="flex flex-col md:flex-row flex-1 p-3 md:p-4 pb-3 md:pb-5 px-3 md:px-5 gap-3 md:gap-5 overflow-hidden z-5">
+      <!-- 3D Viewport (Shown on top on mobile) -->
       <main
-        class="flex-1 relative rounded-2xl overflow-hidden border border-border-subtle bg-black/10"
+        class="w-full h-[45vh] md:h-auto md:flex-1 relative rounded-2xl overflow-hidden border border-border-subtle bg-black/10 order-1 md:order-2"
       >
         <div ref="threeContainer" class="w-full h-full">
           <!-- Floating Guide Overlay -->
           <div
-            class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-6 p-2.5 px-5 rounded-full text-xs text-text-muted pointer-events-none glass-panel"
+            class="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-4 md:gap-6 p-2 px-4 md:p-2.5 md:px-5 rounded-full text-[10px] md:text-xs text-text-muted pointer-events-none glass-panel whitespace-nowrap"
             v-if="!isLoading"
           >
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 md:gap-2">
               <span
-                class="w-3 h-5 border-2 border-text-muted rounded-md relative after:content-[''] after:absolute after:top-1 after:left-1/2 after:-translate-x-1/2 after:w-0.5 after:h-1 after:bg-text-muted after:rounded-full"
+                class="w-2.5 h-4 md:w-3 md:h-5 border-2 border-text-muted rounded-md relative after:content-[''] after:absolute after:top-0.5 after:left-1/2 after:-translate-x-1/2 after:w-0.5 after:h-0.5 md:after:h-1 after:bg-text-muted after:rounded-full"
               ></span>
               <span>Drag to rotate</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 md:gap-2">
               <span
-                class="w-4 h-4 border-2 border-text-muted rounded-full relative after:content-['↕'] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:text-[10px] after:leading-none"
+                class="w-3.5 h-3.5 md:w-4 md:h-4 border-2 border-text-muted rounded-full relative after:content-['↕'] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:text-[8px] md:after:text-[10px] after:leading-none"
               ></span>
               <span>Scroll to zoom</span>
             </div>
@@ -839,20 +495,20 @@ onMounted(() => {
           v-if="isLoading"
         >
           <div
-            class="p-10 max-w-[380px] w-11/12 text-center flex flex-col items-center gap-4 glass-panel"
+            class="p-6 md:p-10 max-w-[340px] md:max-w-[380px] w-11/12 text-center flex flex-col items-center gap-3 md:gap-4 glass-panel"
           >
             <div
-              class="w-12 h-12 border-3 border-white/5 border-t-accent-indigo rounded-full animate-spin"
+              class="w-10 h-10 md:w-12 md:h-12 border-3 border-white/5 border-t-accent-indigo rounded-full animate-spin"
             ></div>
-            <h3 class="text-white font-bold text-lg">Loading Studio Asset</h3>
-            <p class="text-sm text-text-muted">Initializing high-resolution 3D materials...</p>
-            <div class="w-full h-1 bg-white/8 rounded-full overflow-hidden mt-2">
+            <h3 class="text-white font-bold text-base md:text-lg">Loading Studio Asset</h3>
+            <p class="text-xs md:text-sm text-text-muted">Initializing high-resolution 3D materials...</p>
+            <div class="w-full h-1 bg-white/8 rounded-full overflow-hidden mt-1 md:mt-2">
               <div
                 class="h-full bg-accent-indigo transition-all duration-100 shadow-[0_0_10px_rgba(99,102,241,0.5)]"
                 :style="{ width: loadingProgress + '%' }"
               ></div>
             </div>
-            <span class="text-xs text-text-muted font-mono">{{ loadingProgress }}%</span>
+            <span class="text-[10px] md:text-xs text-text-muted font-mono">{{ loadingProgress }}%</span>
           </div>
         </div>
 
@@ -862,13 +518,375 @@ onMounted(() => {
           v-if="errorMessage"
         >
           <div
-            class="p-10 max-w-[380px] w-11/12 text-center flex flex-col items-center gap-4 glass-panel"
+            class="p-6 md:p-10 max-w-[340px] md:max-w-[380px] w-11/12 text-center flex flex-col items-center gap-3 md:gap-4 glass-panel"
           >
-            <h3 class="text-red-500 font-bold text-lg">Something went wrong</h3>
-            <p class="text-sm text-text-muted">{{ errorMessage }}</p>
+            <h3 class="text-red-500 font-bold text-base md:text-lg">Something went wrong</h3>
+            <p class="text-xs md:text-sm text-text-muted">{{ errorMessage }}</p>
           </div>
         </div>
       </main>
+
+      <!-- Sidebar Controls -->
+      <aside class="glass-panel w-full md:w-[420px] flex flex-col overflow-hidden flex-1 md:flex-initial min-h-0 md:h-full order-2 md:order-1">
+        <!-- Navigation Tabs -->
+        <nav class="flex border-b border-border-subtle bg-white/[0.01] shrink-0">
+          <button
+            :class="[
+              'flex-1 flex flex-col items-center gap-1 bg-none border-b-2 border-transparent text-text-muted py-2.5 md:py-3.5 px-1 text-[10px] md:text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
+              {
+                'text-accent-indigo border-accent-indigo bg-accent-indigo/4': activeTab === 'color',
+              },
+            ]"
+            @click="activeTab = 'color'"
+          >
+            <Paintbrush :size="16" class="md:hidden" />
+            <Paintbrush :size="18" class="hidden md:block" />
+            Base Color
+          </button>
+          <button
+            :class="[
+              'flex-1 flex flex-col items-center gap-1 bg-none border-b-2 border-transparent text-text-muted py-2.5 md:py-3.5 px-1 text-[10px] md:text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
+              {
+                'text-accent-indigo border-accent-indigo bg-accent-indigo/4':
+                  activeTab === 'design',
+              },
+            ]"
+            @click="activeTab = 'design'"
+          >
+            <ImageIcon :size="16" class="md:hidden" />
+            <ImageIcon :size="18" class="hidden md:block" />
+            Decal Design
+          </button>
+          <button
+            :class="[
+              'flex-1 flex flex-col items-center gap-1 bg-none border-b-2 border-transparent text-text-muted py-2.5 md:py-3.5 px-1 text-[10px] md:text-[11px] font-semibold cursor-pointer uppercase tracking-[0.5px] transition-all duration-300 hover:text-white hover:bg-white/[0.02]',
+              {
+                'text-accent-indigo border-accent-indigo bg-accent-indigo/4': activeTab === 'text',
+              },
+            ]"
+            @click="activeTab = 'text'"
+          >
+            <Type :size="16" class="md:hidden" />
+            <Type :size="18" class="hidden md:block" />
+            Custom Text
+          </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-6">
+          <!-- T-Shirt Color Tab -->
+          <div v-if="activeTab === 'color'" class="animate-fade-in">
+            <h2 class="text-base md:text-lg font-bold mb-1">Shirt Base Color</h2>
+            <p class="text-[11px] md:text-xs text-text-muted mb-4 md:mb-6 leading-relaxed">
+              Select a preset canvas tone or choose a custom aesthetic hue.
+            </p>
+
+            <div class="grid grid-cols-4 gap-2 md:gap-3 mb-5 md:mb-7">
+              <button
+                v-for="color in presetColors"
+                :key="color.hex"
+                class="h-10 md:h-13 rounded-xl border border-border-subtle cursor-pointer relative transition-all duration-300 hover:scale-[1.06] hover:shadow-[0_4px_12px_rgba(0,0,0,0.4)]"
+                :style="{ backgroundColor: color.hex }"
+                :title="color.name"
+                @click="shirtColor = color.hex"
+              >
+                <span
+                  class="absolute inset-0 flex items-center justify-center"
+                  v-if="shirtColor.toLowerCase() === color.hex.toLowerCase()"
+                >
+                  <Check
+                    :size="12"
+                    :stroke-width="3"
+                    :class="color.hex === '#f3f4f6' ? 'text-[#121214]' : 'text-white'"
+                    class="md:hidden"
+                  />
+                  <Check
+                    :size="14"
+                    :stroke-width="3"
+                    :class="color.hex === '#f3f4f6' ? 'text-[#121214]' : 'text-white'"
+                    class="hidden md:inline-block"
+                  />
+                </span>
+              </button>
+            </div>
+
+            <div class="pt-4 border-t border-border-subtle">
+              <label
+                class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider mb-2.5 block"
+                >Custom Hue</label
+              >
+              <div class="flex gap-3 items-center">
+                <div
+                  class="w-9 h-9 md:w-11 md:h-11 rounded-lg border border-border-subtle relative overflow-hidden cursor-pointer"
+                  :style="{ backgroundColor: shirtColor }"
+                >
+                  <input
+                    type="color"
+                    v-model="shirtColor"
+                    class="absolute -top-1 -left-1 w-12 h-12 md:w-15 md:h-15 border-0 p-0 cursor-pointer opacity-0"
+                  />
+                </div>
+                <input
+                  type="text"
+                  v-model="shirtColor"
+                  class="flex-1 p-2 md:p-2.5 px-3 md:px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-xs md:text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Graphic Decal Tab -->
+          <div v-if="activeTab === 'design'" class="animate-fade-in">
+            <h2 class="text-base md:text-lg font-bold mb-1">Select Graphic Decal</h2>
+            <p class="text-[11px] md:text-xs text-text-muted mb-4 md:mb-6 leading-relaxed">
+              Choose from high-fidelity vector decals or upload your own transparent graphic.
+            </p>
+
+            <div class="grid grid-cols-4 md:grid-cols-2 gap-2 md:gap-3 mb-4 md:mb-5">
+              <button
+                v-for="design in presetDesigns"
+                :key="design.url"
+                :class="[
+                  'bg-white/[0.02] border border-border-subtle rounded-xl p-1.5 md:p-2.5 cursor-pointer transition-all duration-300 flex flex-col items-center gap-1.5 md:gap-2 hover:bg-white/[0.04] hover:border-white/15 hover:-translate-y-0.5',
+                  { 'border-accent-indigo bg-accent-indigo/5': currentDesign === design.url },
+                ]"
+                @click="currentDesign = design.url"
+              >
+                <div
+                  class="w-full h-12 md:h-20 flex items-center justify-center bg-black/20 rounded-lg p-1.5 md:p-2"
+                >
+                  <img
+                    :src="design.url"
+                    :alt="design.name"
+                    class="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                <span
+                  :class="[
+                    'text-[10px] md:text-[11px] font-semibold text-text-muted text-center line-clamp-1',
+                    { 'text-white': currentDesign === design.url },
+                  ]"
+                  >{{ design.name }}</span
+                >
+              </button>
+            </div>
+
+            <!-- Custom File Upload -->
+            <div class="mb-4 md:mb-6">
+              <label
+                class="group block border-2 border-dashed border-border-subtle rounded-xl p-4 md:p-5 text-center cursor-pointer transition-all duration-300 hover:border-accent-indigo hover:bg-accent-indigo/2"
+              >
+                <input
+                  type="file"
+                  @change="handleImageUpload"
+                  accept="image/png, image/jpeg, image/svg+xml"
+                  class="hidden"
+                />
+                <div class="flex flex-col items-center gap-1.5 md:gap-2">
+                  <Upload
+                    :size="20"
+                    class="text-text-muted group-hover:text-accent-indigo group-hover:-translate-y-0.5 transition-all duration-300 md:hidden"
+                  />
+                  <Upload
+                    :size="24"
+                    class="text-text-muted group-hover:text-accent-indigo group-hover:-translate-y-0.5 transition-all duration-300 hidden md:block"
+                  />
+                  <span class="text-[11px] md:text-xs font-semibold">Upload Custom PNG/SVG</span>
+                  <span class="text-[9px] md:text-[11px] text-text-muted"
+                    >Transparent background recommended</span
+                  >
+                </div>
+              </label>
+            </div>
+
+            <!-- Position Controls -->
+            <div class="pt-4 md:pt-5 border-t border-border-subtle" v-if="currentDesign">
+              <h3 class="text-xs md:text-sm font-bold mb-3 md:mb-4 flex items-center gap-1.5">
+                <Move :size="12" class="md:hidden" />
+                <Move :size="14" class="hidden md:inline" /> Position & Scale
+              </h3>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Scale</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold"
+                    >{{ Math.round(designScale * 100) }}%</span
+                  >
+                </div>
+                <input type="range" min="0.1" max="0.8" step="0.01" v-model.number="designScale" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Vertical Shift</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold">{{
+                    Math.round((designY - 0.4) * -100)
+                  }}</span>
+                </div>
+                <input type="range" min="0.0" max="1.0" step="0.01" v-model.number="designY" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Horizontal Shift</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold">{{
+                    Math.round((designX - 0.5) * 100)
+                  }}</span>
+                </div>
+                <input type="range" min="0.1" max="0.9" step="0.01" v-model.number="designX" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Rotation</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold"
+                    >{{ designRotation }}°</span
+                  >
+                </div>
+                <input type="range" min="-180" max="180" step="1" v-model.number="designRotation" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Text Tab -->
+          <div v-if="activeTab === 'text'" class="animate-fade-in">
+            <h2 class="text-base md:text-lg font-bold mb-1">Add Text Overlay</h2>
+            <p class="text-[11px] md:text-xs text-text-muted mb-4 md:mb-6 leading-relaxed">
+              Type your custom slogan and refine typography parameters.
+            </p>
+
+            <div class="mb-4 md:mb-5">
+              <label
+                class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 block"
+                >Slogan / Custom Text</label
+              >
+              <input
+                type="text"
+                v-model="customText"
+                placeholder="TYPE YOUR TEXT HERE"
+                maxlength="32"
+                class="w-full p-2 md:p-2.5 px-3 md:px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-sm md:text-base font-semibold outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
+              />
+            </div>
+
+            <div class="pt-4 md:pt-5 border-t border-border-subtle" v-if="customText">
+              <div class="mb-3 md:mb-4">
+                <label
+                  class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 block"
+                  >Font Family</label
+                >
+                <select
+                  v-model="textFont"
+                  class="w-full p-2 md:p-2.5 px-3 md:px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-xs md:text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
+                >
+                  <option v-for="font in textFonts" :key="font" :value="font" class="bg-[#121218]">
+                    {{ font }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Text Color</span
+                  >
+                </div>
+                <div class="flex gap-3 items-center">
+                  <div
+                    class="w-9 h-9 md:w-11 md:h-11 rounded-lg border border-border-subtle relative overflow-hidden cursor-pointer"
+                    :style="{ backgroundColor: textColor }"
+                  >
+                    <input
+                      type="color"
+                      v-model="textColor"
+                      class="absolute -top-1 -left-1 w-12 h-12 md:w-15 md:h-15 border-0 p-0 cursor-pointer opacity-0"
+                    />
+                  </div>
+                  <input
+                    type="text"
+                    v-model="textColor"
+                    class="flex-1 p-2 md:p-2.5 px-3 md:px-3.5 bg-white/4 border border-border-subtle rounded-lg text-white font-sans text-xs md:text-sm outline-none transition-all duration-300 focus:border-accent-indigo focus:shadow-[0_0_0_3px_rgba(99,102,241,0.15)]"
+                  />
+                </div>
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Text Size</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold">{{ textSize }}px</span>
+                </div>
+                <input type="range" min="4" max="100" step="1" v-model.number="textSize" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Letter Spacing</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold"
+                    >{{ textLetterSpacing }}px</span
+                  >
+                </div>
+                <input type="range" min="0" max="25" step="1" v-model.number="textLetterSpacing" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Vertical Position</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold">{{
+                    Math.round((textY - 0.68) * 100)
+                  }}</span>
+                </div>
+                <input type="range" min="0.0" max="1.0" step="0.01" v-model.number="textY" />
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider"
+                    >Horizontal Position</span
+                  >
+                  <span class="text-[11px] md:text-xs text-accent-indigo font-semibold">{{
+                    Math.round((textX - 0.5) * 100)
+                  }}</span>
+                </div>
+                <input type="range" min="0.1" max="0.9" step="0.01" v-model.number="textX" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Export Actions Panel -->
+        <div class="p-3 md:p-5 px-4 md:px-6 border-t border-border-subtle grid grid-cols-2 gap-2 md:gap-3 bg-white/[0.01] shrink-0">
+          <button
+            class="flex items-center justify-center gap-1.5 md:gap-2 bg-accent-indigo hover:bg-indigo-600 text-white font-semibold py-2 md:py-3 px-3 md:px-5 rounded-lg cursor-pointer transition-all duration-300 shadow-[0_4px_14px_rgba(99,102,241,0.2)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5 text-xs md:text-sm"
+            @click="exportMockup"
+          >
+            <Download :size="14" class="md:hidden" />
+            <Download :size="16" class="hidden md:inline" />
+            Export 3D
+          </button>
+          <button
+            class="flex items-center justify-center gap-1.5 md:gap-2 bg-white/6 hover:bg-white/10 border border-border-subtle hover:border-white/20 text-white font-semibold py-2 md:py-3 px-3 md:px-5 rounded-lg cursor-pointer transition-all duration-300 text-xs md:text-sm"
+            @click="exportPrintDesign"
+          >
+            <Maximize2 :size="14" class="md:hidden" />
+            <Maximize2 :size="16" class="hidden md:inline" />
+            Print Template
+          </button>
+        </div>
+      </aside>
     </div>
   </div>
 </template>
