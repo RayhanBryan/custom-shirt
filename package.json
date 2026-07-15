@@ -1,0 +1,30 @@
+{
+  "name": "custom-shirt",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write --experimental-cli src/"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.24.0",
+    "@tailwindcss/vite": "^4.3.2",
+    "lucide-vue-next": "^1.0.0",
+    "pinia": "^3.0.4",
+    "tailwindcss": "^4.3.2",
+    "three": "^0.185.1",
+    "vue": "^3.5.38"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.7",
+    "prettier": "3.8.4",
+    "vite": "^8.0.16",
+    "vite-plugin-vue-devtools": "^8.1.2"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
+  }
+}

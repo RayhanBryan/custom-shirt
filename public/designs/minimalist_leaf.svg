@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="none" />
+  
+  <!-- Soft abstract background shapes -->
+  <path d="M 120,240 C 90,140 220,100 280,160 C 340,220 220,320 180,340 C 140,360 150,340 120,240 Z" fill="#E6DFD3" />
+  <circle cx="340" cy="300" r="70" fill="#D3C5B0" opacity="0.6" />
+  <path d="M 300,100 C 380,80 420,160 380,220 C 340,280 260,120 300,100 Z" fill="#C2B299" opacity="0.4" />
+  
+  <!-- Line Art Leaf -->
+  <path d="M 250,420 
+           Q 240,300 250,120 
+           M 250,150 Q 200,140 160,180 Q 210,190 250,190
+           M 250,190 Q 180,200 130,260 Q 190,260 250,240
+           M 250,240 Q 170,270 120,350 Q 180,330 250,290
+           
+           M 250,150 Q 300,140 340,180 Q 290,190 250,190
+           M 250,190 Q 320,200 370,260 Q 310,260 250,240
+           M 250,240 Q 330,270 380,350 Q 320,330 250,290" 
+        fill="none" stroke="#2C2C2C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

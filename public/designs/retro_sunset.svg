@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sunsetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF2E93" />
+      <stop offset="40%" stop-color="#FF8A00" />
+      <stop offset="100%" stop-color="#FFDD00" />
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F0FF" />
+      <stop offset="100%" stop-color="#7000FF" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="none" />
+  <g transform="translate(0, 0)">
+    <!-- Sun -->
+    <circle cx="250" cy="220" r="150" fill="url(#sunsetGrad)" />
+    
+    <!-- Sunset lines (cutouts) using masks or simple rects matching background (simulating transparency) -->
+    <rect x="50" y="240" width="400" height="8" fill="#111" opacity="0.15" />
+    <rect x="50" y="260" width="400" height="12" fill="#111" opacity="0.25" />
+    <rect x="50" y="285" width="400" height="16" fill="#111" opacity="0.4" />
+    <rect x="50" y="315" width="400" height="22" fill="#111" opacity="0.6" />
+    
+    <!-- Palm trees silhouette -->
+    <path d="M180,370 Q190,260 150,200 Q155,195 160,200 Q200,260 190,370 Z" fill="#111" />
+    <path d="M150,200 Q110,180 80,210 Q110,195 150,200 Q120,160 100,150 Q125,165 150,200 Q150,150 160,120 Q160,150 150,200 Q180,160 210,160 Q175,175 150,200 Q190,195 210,220 Q175,205 150,200 Z" fill="#111" />
+    
+    <path d="M320,370 Q310,240 350,180 Q345,175 340,180 Q300,240 320,370 Z" fill="#111" />
+    <path d="M350,180 Q390,160 420,190 Q390,175 350,180 Q380,140 400,130 Q375,145 350,180 Q350,130 340,100 Q340,130 350,180 Q320,140 290,140 Q325,155 350,180 Q310,175 290,200 Q325,185 350,180 Z" fill="#111" />
+
+    <!-- Wave at bottom -->
+    <path d="M 50,370 Q 150,340 250,370 T 450,370 L 450,420 L 50,420 Z" fill="url(#waveGrad)" opacity="0.8" />
+    <path d="M 50,390 Q 150,370 250,390 T 450,390 L 450,430 L 50,430 Z" fill="#00F0FF" opacity="0.4" />
+  </g>
+</svg>
