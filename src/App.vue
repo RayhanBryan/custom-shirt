@@ -57,6 +57,7 @@ const textColor = ref('#ffffff')
 const textX = ref(0.5) // center alignment
 const textY = ref(0.45) // chest area on the enlarged decal canvas, below design
 const textLetterSpacing = ref(4)
+const textShape = ref('straight') // straight, circle, wave, heart, square
 
 // 3D Scene Refs
 const threeContainer = ref(null)
@@ -146,24 +147,126 @@ const drawTextureCanvas = () => {
     ctx.textBaseline = 'middle'
     ctx.font = `bold ${textSize.value}px "${textFont.value}"`
 
-    // Letter spacing simulation for standard 2D canvas
     const textString = customText.value
+    const chars = textString.split('')
     const spacing = textLetterSpacing.value
 
-    if (spacing > 0) {
-      let totalWidth = 0
-      const chars = textString.split('')
-      const charWidths = chars.map((c) => ctx.measureText(c).width)
-      const totalSpacing = (chars.length - 1) * spacing
-      const sumWidths = charWidths.reduce((a, b) => a + b, 0)
+    // Measure character widths
+    const charWidths = chars.map((c) => ctx.measureText(c).width)
+    const totalSpacing = (chars.length - 1) * spacing
+    const sumWidths = charWidths.reduce((a, b) => a + b, 0)
+    const totalLength = sumWidths + totalSpacing
 
-      let currentX = -(sumWidths + totalSpacing) / 2
+    const shape = textShape.value
+
+    if (shape === 'straight') {
+      let currentX = -totalLength / 2
       for (let i = 0; i < chars.length; i++) {
         ctx.fillText(chars[i], currentX + charWidths[i] / 2, 0)
         currentX += charWidths[i] + spacing
       }
     } else {
-      ctx.fillText(textString, 0, 0)
+      // Draw along shape path
+      for (let i = 0; i < chars.length; i++) {
+        // Find normalized position along path
+        let t = 0.5
+        if (chars.length > 1) {
+          if (shape === 'heart' || shape === 'square') {
+            // For closed shapes, distribute along [0, 1) to form the full shape
+            t = i / chars.length
+          } else {
+            // For open shapes (circle, wave), map based on cumulative length to keep letter spacing consistent
+            let accWidth = 0
+            for (let j = 0; j < i; j++) {
+              accWidth += charWidths[j] + spacing
+            }
+            accWidth += charWidths[i] / 2
+            t = accWidth / totalLength
+          }
+        }
+
+        let px = 0
+        let py = 0
+        let angle = 0
+
+        if (shape === 'circle') {
+          // Circular arch
+          const R = Math.max(120, totalLength / Math.PI)
+          const thetaSweep = totalLength / R
+          const theta = -Math.PI / 2 - thetaSweep / 2 + t * thetaSweep
+          px = R * Math.cos(theta)
+          py = R * Math.sin(theta) + R
+          angle = theta + Math.PI / 2
+        } else if (shape === 'wave') {
+          // Sine wave
+          px = (t - 0.5) * totalLength
+          const waveHeight = 25
+          const waveFreq = 1.5
+          py = waveHeight * Math.sin(t * Math.PI * 2 * waveFreq)
+          
+          const dt = 0.01
+          const nextX = (t + dt - 0.5) * totalLength
+          const nextY = waveHeight * Math.sin((t + dt) * Math.PI * 2 * waveFreq)
+          angle = Math.atan2(nextY - py, nextX - px)
+        } else if (shape === 'heart') {
+          // Heart shape
+          const getHeartPoint = (tVal) => {
+            const theta = -Math.PI + tVal * 2 * Math.PI
+            const x_raw = 16 * Math.pow(Math.sin(theta), 3)
+            const y_raw = 13 * Math.cos(theta) - 5 * Math.cos(2 * theta) - 2 * Math.cos(3 * theta) - Math.cos(4 * theta)
+            const scale = Math.max(6, textSize.value * 0.4)
+            return {
+              x: x_raw * scale,
+              y: -y_raw * scale
+            }
+          }
+          const p1 = getHeartPoint(t)
+          const p2 = getHeartPoint(t + 0.005)
+          px = p1.x
+          py = p1.y
+          angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) + Math.PI / 2
+        } else if (shape === 'square') {
+          // Square shape
+          const side = Math.max(120, totalLength / 4)
+          const getSquarePoint = (tVal) => {
+            let x = 0
+            let y = 0
+            let ang = 0
+            if (tVal <= 0.25) {
+              const u = tVal / 0.25
+              x = -side / 2 + u * side
+              y = -side / 2
+              ang = 0
+            } else if (tVal <= 0.5) {
+              const u = (tVal - 0.25) / 0.25
+              x = side / 2
+              y = -side / 2 + u * side
+              ang = Math.PI / 2
+            } else if (tVal <= 0.75) {
+              const u = (tVal - 0.5) / 0.25
+              x = side / 2 - u * side
+              y = side / 2
+              ang = Math.PI
+            } else {
+              const u = (tVal - 0.75) / 0.25
+              x = -side / 2
+              y = side / 2 - u * side
+              ang = -Math.PI / 2
+            }
+            return { x, y, angle: ang }
+          }
+          const p = getSquarePoint(t)
+          px = p.x
+          py = p.y
+          angle = p.angle
+        }
+
+        ctx.save()
+        ctx.translate(px, py)
+        ctx.rotate(angle)
+        ctx.fillText(chars[i], 0, 0)
+        ctx.restore()
+      }
     }
 
     ctx.restore()
@@ -247,7 +350,10 @@ const initThreeScene = () => {
   controls.dampingFactor = 0.05
   controls.maxDistance = 18
   controls.minDistance = 1
-  controls.enablePan = false
+  controls.enablePan = true
+
+  // Prevent right-click context menu on the canvas to allow right-click panning
+  renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault())
 
   // Lights Setup
   const ambientLight = new THREE.AmbientLight('#ffffff', 0.6)
@@ -375,6 +481,7 @@ watch(
     textX,
     textY,
     textLetterSpacing,
+    textShape,
   ],
   () => {
     drawTextureCanvas()
@@ -471,14 +578,20 @@ onMounted(() => {
         <div ref="threeContainer" class="w-full h-full">
           <!-- Floating Guide Overlay -->
           <div
-            class="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-4 md:gap-6 p-2 px-4 md:p-2.5 md:px-5 rounded-full text-[10px] md:text-xs text-text-muted pointer-events-none glass-panel whitespace-nowrap"
+            class="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex gap-3 md:gap-4 p-2 px-4 md:p-2.5 md:px-5 rounded-full text-[10px] md:text-xs text-text-muted pointer-events-none glass-panel whitespace-nowrap"
             v-if="!isLoading"
           >
             <div class="flex items-center gap-1.5 md:gap-2">
               <span
                 class="w-2.5 h-4 md:w-3 md:h-5 border-2 border-text-muted rounded-md relative after:content-[''] after:absolute after:top-0.5 after:left-1/2 after:-translate-x-1/2 after:w-0.5 after:h-0.5 md:after:h-1 after:bg-text-muted after:rounded-full"
               ></span>
-              <span>Drag to rotate</span>
+              <span>Left-click drag to rotate</span>
+            </div>
+            <div class="flex items-center gap-1.5 md:gap-2">
+              <span
+                class="w-2.5 h-4 md:w-3 md:h-5 border-2 border-text-muted rounded-md relative after:content-[''] after:absolute after:top-0.5 after:right-0.5 after:w-0.5 after:h-1 md:after:h-1.5 after:bg-accent-indigo after:rounded-tr-sm"
+              ></span>
+              <span>Right-click drag to move</span>
             </div>
             <div class="flex items-center gap-1.5 md:gap-2">
               <span
@@ -791,6 +904,35 @@ onMounted(() => {
                     {{ font }}
                   </option>
                 </select>
+              </div>
+
+              <div class="mb-3 md:mb-4">
+                <label
+                  class="text-[10px] md:text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 block"
+                  >Text Shape</label
+                >
+                <div class="grid grid-cols-5 gap-1 bg-white/4 p-1 rounded-xl border border-border-subtle">
+                  <button
+                    type="button"
+                    v-for="shapeOpt in [
+                      { value: 'straight', label: 'Flat' },
+                      { value: 'circle', label: 'Arc' },
+                      { value: 'wave', label: 'Wave' },
+                      { value: 'heart', label: 'Heart' },
+                      { value: 'square', label: 'Square' }
+                    ]"
+                    :key="shapeOpt.value"
+                    :class="[
+                      'py-1.5 rounded-lg text-[10px] md:text-xs font-bold transition-all duration-300 cursor-pointer text-center',
+                      textShape === shapeOpt.value
+                        ? 'bg-accent-indigo text-white shadow-[0_2px_8px_rgba(99,102,241,0.3)]'
+                        : 'text-text-muted hover:text-white hover:bg-white/4'
+                    ]"
+                    @click="textShape = shapeOpt.value"
+                  >
+                    {{ shapeOpt.label }}
+                  </button>
+                </div>
               </div>
 
               <div class="mb-3 md:mb-4">
